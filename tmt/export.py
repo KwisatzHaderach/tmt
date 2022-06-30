@@ -257,7 +257,7 @@ def bz_set_coverage(bug_ids, case_id, tracker_id):
         " ".join([f"BZ#{bz_id}" for bz_id in bug_ids])), fg='magenta'))
 
 
-def _get_polarion_ids(query_result, preferred_project=None):
+def get_polarion_ids(query_result, preferred_project=None):
     """ Return case and project ids from query results """
     if not query_result:
         return 'None', None
@@ -291,19 +291,19 @@ def get_polarion_case(data, preferred_project=None):
     if data.get(ID_KEY):
         query_result = PolarionWorkItem.query(
             data.get(ID_KEY), fields=['work_item_id', 'project_id'])
-        polarion_id, project_id = _get_polarion_ids(query_result, preferred_project)
+        polarion_id, project_id = get_polarion_ids(query_result, preferred_project)
     # Search by TCMS Case ID
     if not project_id and data.get('extra-nitrate'):
         nitrate_case_id = str(int(
             re.search(r'\d+', data.get("extra-nitrate")).group()))
         query_result = PolarionWorkItem.query(
             nitrate_case_id, fields=['work_item_id', 'project_id'])
-        polarion_id, project_id = _get_polarion_ids(query_result, preferred_project)
+        polarion_id, project_id = get_polarion_ids(query_result, preferred_project)
     # Search by extra task
     if not project_id and data.get('extra-task'):
         query_result = PolarionWorkItem.query(
             data.get('extra-task'), fields=['work_item_id', 'project_id'])
-        polarion_id, project_id = _get_polarion_ids(query_result, preferred_project)
+        polarion_id, project_id = get_polarion_ids(query_result, preferred_project)
 
     try:
         polarion_case = PolarionTestCase(

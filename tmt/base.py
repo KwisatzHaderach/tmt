@@ -2061,6 +2061,7 @@ class Result(object):
         self.name = name
         self.note = data.get('note')
         self.duration = data.get('duration')
+        self.id = data.get('id')
 
         # Check for valid results
         try:

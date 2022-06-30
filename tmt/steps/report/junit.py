@@ -34,6 +34,40 @@ def duration_to_seconds(duration):
             f"Malformed duration '{duration}' ({error}).")
 
 
+def make_junit_xml(report, properties=None):
+    """ Create junit xml object """
+    import_junit_xml()
+
+    suite = junit_xml.TestSuite(report.step.plan.name)
+    if properties:
+        suite.properties = properties
+
+    for result in report.step.plan.execute.results():
+        try:
+            main_log = report.step.plan.execute.read(result.log[0])
+        except (IndexError, AttributeError):
+            main_log = None
+        case = junit_xml.TestCase(
+            result.name,
+            classname=None,
+            elapsed_sec=duration_to_seconds(result.duration),
+            stdout=main_log
+        )
+        # Map tmt OUTCOME to JUnit states
+        if result.result == "error":
+            case.add_error_info(result.result)
+        elif result.result == "fail":
+            case.add_failure_info(result.result)
+        elif result.result == "info":
+            case.add_skipped_info(result.result)
+        elif result.result == "warn":
+            case.add_error_info(result.result)
+        # Passed state is the default
+        suite.test_cases.append(case)
+
+    return suite
+
+
 class ReportJUnit(tmt.steps.report.ReportPlugin):
     """
     Write test results in JUnit format
@@ -61,31 +95,8 @@ class ReportJUnit(tmt.steps.report.ReportPlugin):
         """ Read executed tests and write junit """
         super().go()
 
-        import_junit_xml()
+        suite = make_junit_xml(self)
 
-        suite = junit_xml.TestSuite(self.step.plan.name)
-        for result in self.step.plan.execute.results():
-            try:
-                main_log = self.step.plan.execute.read(result.log[0])
-            except (IndexError, AttributeError):
-                main_log = None
-            case = junit_xml.TestCase(
-                result.name,
-                classname=None,
-                elapsed_sec=duration_to_seconds(result.duration),
-                stdout=main_log
-                )
-            # Map tmt OUTCOME to JUnit states
-            if result.result == "error":
-                case.add_error_info(result.result)
-            elif result.result == "fail":
-                case.add_failure_info(result.result)
-            elif result.result == "info":
-                case.add_skipped_info(result.result)
-            elif result.result == "warn":
-                case.add_error_info(result.result)
-            # Passed state is the default
-            suite.test_cases.append(case)
         f_path = self.opt("file", os.path.join(self.workdir, DEFAULT_NAME))
         try:
             with open(f_path, 'w') as fw:
