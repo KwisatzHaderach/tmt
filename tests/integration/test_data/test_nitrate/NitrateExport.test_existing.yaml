@@ -6,7 +6,7 @@ nitrate.xmlrpc_driver:
   single_request_with_cookies:
   - metadata:
       guess_type: Tuple
-      latency: 0.0
+      latency: 0.5888087749481201
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -61,11 +61,14 @@ nitrate.xmlrpc_driver:
 
         name: /existing_testcase
 
-        url: https://github.com/psss/tmt.git
+        url: https://github.com/teemtee/tmt.git
 
-        ref: bad_url
+        path: /tests/integrationikj88w1g
 
-        path: /tests/integrationppzuow9w
+
+        [uuid]
+
+        None
 
 
         [structured-field-end]
@@ -99,7 +102,7 @@ nitrate.xmlrpc_driver:
         setup_checksum: d41d8cd98f00b204e9800998ecf8427e
   - metadata:
       guess_type: Tuple
-      latency: 0.0
+      latency: 0.5112075805664062
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -119,7 +122,7 @@ nitrate.xmlrpc_driver:
     - []
   - metadata:
       guess_type: Tuple
-      latency: 0.0
+      latency: 0.7525975704193115
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -139,7 +142,7 @@ nitrate.xmlrpc_driver:
     - []
   - metadata:
       guess_type: Tuple
-      latency: 0.0
+      latency: 0.5082879066467285
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -160,7 +163,7 @@ nitrate.xmlrpc_driver:
         name: fmf-export
   - metadata:
       guess_type: Tuple
-      latency: 0.0
+      latency: 0.5193183422088623
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -180,7 +183,7 @@ nitrate.xmlrpc_driver:
     - null
   - metadata:
       guess_type: Tuple
-      latency: 0.0
+      latency: 0.5148959159851074
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -200,7 +203,7 @@ nitrate.xmlrpc_driver:
     - null
   - metadata:
       guess_type: Tuple
-      latency: 0.0
+      latency: 0.5074198246002197
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -227,7 +230,7 @@ nitrate.xmlrpc_driver:
       product_id: 182
   - metadata:
       guess_type: Tuple
-      latency: 0.0
+      latency: 1.5371086597442627
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -283,11 +286,14 @@ nitrate.xmlrpc_driver:
 
           name: /existing_testcase
 
-          url: https://github.com/psss/tmt.git
+          url: https://github.com/teemtee/tmt.git
 
-          ref: bad_url
+          path: /tests/integrationikj88w1g
 
-          path: /tests/integrationppzuow9w
+
+          [uuid]
+
+          None
 
 
           [structured-field-end]
@@ -306,7 +312,7 @@ nitrate.xmlrpc_driver:
         - 10700
   - metadata:
       guess_type: Tuple
-      latency: 0.0
+      latency: 1.584031343460083
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -362,11 +368,14 @@ nitrate.xmlrpc_driver:
 
           name: /existing_testcase
 
-          url: https://github.com/psss/tmt.git
+          url: https://github.com/teemtee/tmt.git
 
-          ref: bad_url
+          path: /tests/integrationmte9duzq
 
-          path: /tests/integrationj0_78egk
+
+          [uuid]
+
+          None
 
 
           [structured-field-end]
@@ -385,7 +394,7 @@ nitrate.xmlrpc_driver:
         - 10700
   - metadata:
       guess_type: Tuple
-      latency: 0.0
+      latency: 0.6286065578460693
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -416,7 +425,7 @@ tmt.utils:
   check_git_url:
   - metadata:
       guess_type: Simple
-      latency: 0.0
+      latency: 3.814697265625e-06
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -430,4 +439,4 @@ tmt.utils:
       - requre.cassette
       - tmt.utils
       - check_git_url
-    output: https://github.com/psss/tmt.git
+    output: https://github.com/teemtee/tmt.git
