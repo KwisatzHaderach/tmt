@@ -20,10 +20,9 @@ class ReportPolarion(tmt.steps.report.ReportPlugin):
         """ Prepare command line options """
         return [
             click.option(
-                '--project-id', default='RedHatEnterpriseLinux7',
-                help='Use specific Polarion project ID'),
+                '--project-id', required=True, help='Use specific Polarion project ID'),
             click.option(
-                'testrun-title', help='Use specific TestRun title')
+                '--testrun-title', help='Use specific TestRun title')
         ] + super().options(how)
 
     def go(self):
@@ -35,7 +34,7 @@ class ReportPolarion(tmt.steps.report.ReportPlugin):
         from tmt.export import PolarionWorkItem
 
         title = self.opt(
-            'testrun_title', self.step.plan.name + datetime.datetime.now())
+            'testrun_title', self.step.plan.name + '-' + str(datetime.datetime.now()))
         project_id = self.opt('project-id')
 
         properties = {
@@ -49,15 +48,15 @@ class ReportPolarion(tmt.steps.report.ReportPlugin):
         xml_tree = ET.fromstring(junit_suite.to_xml_string([junit_suite]))
         testsuite = xml_tree.find('testsuite')
         project_span_ids = testsuite.find(
-            '*property[@name="polarion-project-span-ids"]').attrib['value']
+            '*property[@name="polarion-project-span-ids"]')
 
         for result in self.step.plan.execute.results():
             work_item_id, test_project_id = get_polarion_ids(
                 PolarionWorkItem.query(
                     result.id, fields=['work_item_id', 'project_id']))
 
-            if test_project_id not in project_span_ids:
-                project_span_ids += f',{test_project_id}'
+            if test_project_id not in project_span_ids.attrib['value']:
+                project_span_ids.attrib['value'] += f',{test_project_id}'
 
             test_properties = {
                 'polarion-testcase-id': work_item_id,
@@ -70,7 +69,6 @@ class ReportPolarion(tmt.steps.report.ReportPlugin):
                 ET.SubElement(properties_elem, 'property', attrib={
                     'name': name, 'value': value})
 
-        import pdb;pdb.set_trace()
         server_url = str(PolarionWorkItem._session._server.url)
         polarion_import_url = (
             f'{server_url}{"" if server_url.endswith("/") else "/"}'
@@ -82,4 +80,4 @@ class ReportPolarion(tmt.steps.report.ReportPlugin):
         response = post(
             polarion_import_url, auth=auth,
             files={'file': ('xunit.xml', ET.tostring(xml_tree))})
-        self.info(f'Response code is {response.status_code}')
+        self.info(f'Response code is {response.status_code} with text: {response.text}')

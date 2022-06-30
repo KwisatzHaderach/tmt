@@ -295,16 +295,15 @@ class ExecutePlugin(tmt.steps.Plugin):
                 data['note'] = 'timeout'
                 self.timeout_hint(test)
         # Add uuid data
-        data['id'] = test.get(
-            'id', test.get(
-                'extra-nitrate', test.get(
+        data['id'] = test.node.get(
+            'id', test.node.get(
+                'extra-nitrate', test.node.get(
                     'extra-task', '')))
         return tmt.Result(data, test.name, test.result)
 
     def check_beakerlib(self, test):
         """ Check result of a beakerlib test """
         # Initialize data, prepare log paths
-        import pdb;pdb.set_trace()
         data = {'result': 'error',
                 'log': [],
                 'duration': test.real_duration}
@@ -312,9 +311,9 @@ class ExecutePlugin(tmt.steps.Plugin):
             if os.path.isfile(self.data_path(test, log, full=True)):
                 data['log'].append(self.data_path(test, log))
         # Add uuid data
-        data['id'] = test.get(
-            'id', test.get(
-                'extra-nitrate', test.get(
+        data['id'] = test.node.get(
+            'id', test.node.get(
+                'extra-nitrate', test.node.get(
                     'extra-task', '')))
         # Check beakerlib log for the result
         try:
