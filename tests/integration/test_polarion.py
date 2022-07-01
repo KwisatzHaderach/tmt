@@ -22,7 +22,7 @@ class PolarionExport(Base):
         runner = CliRunner()
         self.runner_output = runner.invoke(tmt.cli.main, [
             "test", "export", "--how", "polarion", "--project-id",
-            "RHIVOS", "--create", "--general", "."])
+            "RHIVOS", "--create", "."])
         # Reload the node data to see if it appears there
         fmf_node = Tree(self.tmpdir).find("/new_testcase")
         self.assertIn(ID_KEY, fmf_node.data)
@@ -52,7 +52,7 @@ class PolarionExport(Base):
         runner = CliRunner()
         self.runner_output = runner.invoke(tmt.cli.main, [
             "test", "export", "--how", "polarion", "--project-id",
-            "RHIVOS", "--create", "--general", "."])
+            "RHIVOS", "--create", "."])
 
         fmf_node = Tree(self.tmpdir).find("/existing_testcase")
         self.assertEqual(fmf_node.data["extra-nitrate"], "TC#0609686")

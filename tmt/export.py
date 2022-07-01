@@ -62,7 +62,7 @@ def import_polarion():
         from pylero.work_item import _WorkItem as PolarionWorkItem
     except ImportError:
         raise ConvertError(
-            "Run `pip install tmt[export]` so pylero is installed")
+            "Run 'pip install tmt[export-polarion]' so pylero is installed.")
 
 
 def get_bz_instance():
@@ -82,7 +82,7 @@ def get_bz_instance():
 
     if not bz_instance.logged_in:
         raise ConvertError(
-            "Not logged to Bugzilla, check `man bugzilla` section "
+            "Not logged to Bugzilla, check 'man bugzilla' section "
             "'AUTHENTICATION CACHE AND API KEYS'.")
     return bz_instance
 
@@ -257,7 +257,7 @@ def bz_set_coverage(bug_ids, case_id, tracker_id):
         " ".join([f"BZ#{bz_id}" for bz_id in bug_ids])), fg='magenta'))
 
 
-def get_polarion_ids(query_result, preferred_project=None):
+def _get_polarion_ids(query_result, preferred_project=None):
     """ Return case and project ids from query results """
     if not query_result:
         return 'None', None
@@ -291,19 +291,19 @@ def get_polarion_case(data, preferred_project=None):
     if data.get(ID_KEY):
         query_result = PolarionWorkItem.query(
             data.get(ID_KEY), fields=['work_item_id', 'project_id'])
-        polarion_id, project_id = get_polarion_ids(query_result, preferred_project)
+        polarion_id, project_id = _get_polarion_ids(query_result, preferred_project)
     # Search by TCMS Case ID
     if not project_id and data.get('extra-nitrate'):
         nitrate_case_id = str(int(
             re.search(r'\d+', data.get("extra-nitrate")).group()))
         query_result = PolarionWorkItem.query(
             nitrate_case_id, fields=['work_item_id', 'project_id'])
-        polarion_id, project_id = get_polarion_ids(query_result, preferred_project)
+        polarion_id, project_id = _get_polarion_ids(query_result, preferred_project)
     # Search by extra task
     if not project_id and data.get('extra-task'):
         query_result = PolarionWorkItem.query(
             data.get('extra-task'), fields=['work_item_id', 'project_id'])
-        polarion_id, project_id = get_polarion_ids(query_result, preferred_project)
+        polarion_id, project_id = _get_polarion_ids(query_result, preferred_project)
 
     try:
         polarion_case = PolarionTestCase(
@@ -540,12 +540,12 @@ def export_to_nitrate(test):
         echo(style(
             'Add migration warning to the test case notes.', fg='green'))
 
-    # UUID
+    # ID
     uuid = add_uuid_if_not_defined(test.node, dry=dry_mode)
     if not uuid:
         uuid = test.node.get(ID_KEY)
-    struct_field.set('uuid', uuid)
-    echo(style(f"Append the UUID {uuid}.", fg='green'))
+    struct_field.set(ID_KEY, uuid)
+    echo(style(f"Append the ID {uuid}.", fg='green'))
 
     # Saving case.notes with edited StructField
     if not dry_mode:
@@ -604,8 +604,8 @@ def export_to_nitrate(test):
 
     # Optionally link Bugzilla to Nitrate case
     if link_bugzilla and verifies_bug_ids:
-        bz_set_coverage(
-            verifies_bug_ids, int(nitrate_case.id), NITRATE_TRACKER_ID)
+        if not dry_mode:
+            bz_set_coverage(verifies_bug_ids, int(nitrate_case.id), NITRATE_TRACKER_ID)
 
 
 def export_to_polarion(test):
@@ -628,8 +628,8 @@ def export_to_polarion(test):
         if create:
             if not project_id:
                 raise ConvertError(
-                    "Please provide project_id so TMT knows which "
-                    "Polarion project to use for this test case")
+                    "Please provide project_id so tmt knows which "
+                    "Polarion project to use for this test case.")
             if not dry_mode:
                 polarion_case = create_polarion_case(
                     summary, project_id=project_id)
@@ -639,8 +639,8 @@ def export_to_polarion(test):
             test._metadata['extra-summary'] = summary
         else:
             raise ConvertError(
-                f"Polarion test case id not found for {test} "
-                f"(You can use --create option to enforce creating testcases)")
+                f"Polarion test case id not found for '{test}'. "
+                f"(You can use --create option to enforce creating testcases.)")
 
     # Title
     if not dry_mode and polarion_case.title != test.summary:
@@ -746,13 +746,13 @@ def export_to_polarion(test):
         polarion_case.tcmscaseid = str(int(
             re.search(r'\d+', test.node.get("extra-nitrate")).group()))
 
-    # Add uuid to Polarion case
+    # Add id to Polarion case
     uuid = add_uuid_if_not_defined(test.node, dry=dry_mode)
     if not uuid:
         uuid = test.node.get(ID_KEY)
     if not dry_mode:
         polarion_case.test_case_id = uuid
-    echo(style(f"Append the UUID {uuid}.", fg='green'))
+    echo(style(f"Append the ID {uuid}.", fg='green'))
 
     # Add Requirements to Polarion case
     if not dry_mode:
@@ -990,7 +990,7 @@ def return_markdown_file():
 
 
 def get_category():
-    # Get category from Makefile
+    """ Get category from Makefile """
     try:
         with open('Makefile', encoding='utf-8') as makefile_file:
             makefile = makefile_file.read()

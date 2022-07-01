@@ -549,8 +549,10 @@ def tests_import(
     '-h', '--how', metavar='METHOD',
     help='Use specified method for export (nitrate or polarion).')
 @click.option(
-    '--nitrate', is_flag=True, hidden=True,
-    help='Export test metadata to Nitrate.')
+    '--nitrate', is_flag=True,
+    help="Export test metadata to Nitrate, deprecated by '--how nitrate'.")
+@click.option(
+    '--project-id', help='Use specific Polarion project ID.')
 @click.option(
     '--project-id', help='Use specific Polarion project ID')
 @click.option(
@@ -588,7 +590,7 @@ def tests_import(
 @click.option(
     '-d', '--debug', is_flag=True,
     help='Provide as much debugging details as possible.')
-def export(context, format_, how, nitrate, bugzilla, **kwargs):
+def tests_export(context, format_, how, nitrate, bugzilla, **kwargs):
     """
     Export test data into the desired format.
 
@@ -597,7 +599,7 @@ def export(context, format_, how, nitrate, bugzilla, **kwargs):
     """
     tmt.Test._save_context(context)
     if nitrate:
-        echo(style('Option --nitrate is deprecated, please use --how nitrate', fg='red'))
+        context.obj.warn("Option '--nitrate' is deprecated, please use '--how nitrate' instead.")
         how = 'nitrate'
     if bugzilla and not how:
         raise tmt.utils.GeneralError(

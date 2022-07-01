@@ -27,7 +27,7 @@ nitrate.xmlrpc_driver:
       - nitrate.xmlrpc_driver
       - single_request_with_cookies
     output:
-    - 3a0jq20jj63peuscm6tci97insygijnd
+    - 8vevwm4pntsntdkhafyj3cmcuk1or64d
   - metadata:
       guess_type: Tuple
       latency: 0.5091531276702881
@@ -111,15 +111,15 @@ nitrate.xmlrpc_driver:
     - alias: ''
       arguments: ''
       attachment: []
-      author: pmatyas
-      author_id: 4705
-      case_id: 613808
+      author: psplicha
+      author_id: 2117
+      case_id: 614033
       case_status: PROPOSED
       case_status_id: 1
       category: Sanity
       category_id: 518
       component: []
-      create_date: '2022-06-07 22:43:50'
+      create_date: '2022-07-01 19:35:25'
       default_tester: null
       default_tester_id: null
       estimated_time: 00:00:00
@@ -139,17 +139,17 @@ nitrate.xmlrpc_driver:
       text:
         action: ''
         action_checksum: d41d8cd98f00b204e9800998ecf8427e
-        author: pmatyas
-        author_id: 4705
+        author: psplicha
+        author_id: 2117
         breakdown: ''
         breakdown_checksum: d41d8cd98f00b204e9800998ecf8427e
         case: tmt /new_testcase - This is new testcase inside nitrate
-        case_id: 613808
+        case_id: 614033
         case_text_version: 1
-        create_date: '2022-06-07 22:43:50'
+        create_date: '2022-07-01 19:35:25'
         effect: ''
         effect_checksum: d41d8cd98f00b204e9800998ecf8427e
-        id: 883554
+        id: 883930
         setup: ''
         setup_checksum: d41d8cd98f00b204e9800998ecf8427e
   - metadata:
@@ -262,15 +262,15 @@ nitrate.xmlrpc_driver:
     - - alias: ''
         arguments: ''
         attachment: []
-        author: pmatyas
-        author_id: 4705
-        case_id: 613808
+        author: psplicha
+        author_id: 2117
+        case_id: 614033
         case_status: PROPOSED
         case_status_id: 1
         category: Sanity
         category_id: 518
         component: []
-        create_date: '2022-06-07 22:43:50'
+        create_date: '2022-07-01 19:35:25'
         default_tester: null
         default_tester_id: null
         estimated_time: 00:05:00
@@ -311,15 +311,15 @@ nitrate.xmlrpc_driver:
     - - alias: ''
         arguments: ''
         attachment: []
-        author: pmatyas
-        author_id: 4705
-        case_id: 613808
+        author: psplicha
+        author_id: 2117
+        case_id: 614033
         case_status: CONFIRMED
         case_status_id: 2
         category: Sanity
         category_id: 518
         component: []
-        create_date: '2022-06-07 22:43:50'
+        create_date: '2022-07-01 19:35:25'
         default_tester: null
         default_tester_id: null
         estimated_time: 00:05:00
@@ -360,15 +360,15 @@ nitrate.xmlrpc_driver:
     - - alias: ''
         arguments: ' '
         attachment: []
-        author: pmatyas
-        author_id: 4705
-        case_id: 613808
+        author: psplicha
+        author_id: 2117
+        case_id: 614033
         case_status: CONFIRMED
         case_status_id: 2
         category: Sanity
         category_id: 518
         component: []
-        create_date: '2022-06-07 22:43:50'
+        create_date: '2022-07-01 19:35:25'
         default_tester: null
         default_tester_id: null
         estimated_time: 00:05:00
@@ -409,15 +409,15 @@ nitrate.xmlrpc_driver:
     - - alias: ''
         arguments: ' '
         attachment: []
-        author: pmatyas
-        author_id: 4705
-        case_id: 613808
+        author: psplicha
+        author_id: 2117
+        case_id: 614033
         case_status: CONFIRMED
         case_status_id: 2
         category: Sanity
         category_id: 518
         component: []
-        create_date: '2022-06-07 22:43:50'
+        create_date: '2022-07-01 19:35:25'
         default_tester: null
         default_tester_id: null
         estimated_time: 00:05:00
@@ -451,12 +451,14 @@ nitrate.xmlrpc_driver:
 
           url: https://github.com/teemtee/tmt.git
 
-          path: /tests/integrationvqhwh2kj
+          ref: pr1118
+
+          path: /tests/integrationukl7hp2n
 
 
-          [uuid]
+          [id]
 
-          92f10d89-6661-497c-983f-d23078afcee3
+          0a0a80b5-5a78-4771-9700-2c4610091b91
 
 
           [structured-field-end]
