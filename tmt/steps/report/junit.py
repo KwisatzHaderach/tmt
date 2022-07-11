@@ -34,13 +34,11 @@ def duration_to_seconds(duration):
             f"Malformed duration '{duration}' ({error}).")
 
 
-def make_junit_xml(report, properties=None):
+def make_junit_xml(report):
     """ Create junit xml object """
     import_junit_xml()
 
     suite = junit_xml.TestSuite(report.step.plan.name)
-    if properties:
-        suite.properties = properties
 
     for result in report.step.plan.execute.results():
         try:

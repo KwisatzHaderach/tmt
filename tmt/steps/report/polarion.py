@@ -1,11 +1,14 @@
 import datetime
+import os
 import xml.etree.ElementTree as ET
 from requests import post
 
 import click
 
 import tmt
-from .junit import make_junit_xml
+from .junit import ReportJUnit, make_junit_xml
+
+DEFAULT_NAME = 'xunit.xml'
 
 
 class ReportPolarion(tmt.steps.report.ReportPlugin):
@@ -23,7 +26,7 @@ class ReportPolarion(tmt.steps.report.ReportPlugin):
                 '--project-id', required=True, help='Use specific Polarion project ID'),
             click.option(
                 '--testrun-title', help='Use specific TestRun title')
-        ] + super().options(how)
+        ] + super().options(how) + ReportJUnit.options(how)
 
     def go(self):
         """ Go through executed tests and report into Polarion """
@@ -34,8 +37,14 @@ class ReportPolarion(tmt.steps.report.ReportPlugin):
         from tmt.export import PolarionWorkItem
 
         title = self.opt(
-            'testrun_title', self.step.plan.name + '-' + str(datetime.datetime.now()))
+            'testrun_title',
+            self.step.plan.name.rsplit('/', 1)[1] +
+            datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+        title = title.replace('-', '_')
         project_id = self.opt('project-id')
+
+        junit_suite = make_junit_xml(self)
+        xml_tree = ET.fromstring(junit_suite.to_xml_string([junit_suite]))
 
         properties = {
             'polarion-project-id': project_id,
@@ -43,11 +52,13 @@ class ReportPolarion(tmt.steps.report.ReportPlugin):
             'polarion-testrun-id': title,
             'polarion-project-span-ids': project_id
         }
+        testsuites_properties = ET.SubElement(xml_tree, 'properties')
+        for name, value in properties.items():
+            ET.SubElement(testsuites_properties, 'property', attrib={
+                'name': name, 'value': value})
 
-        junit_suite = make_junit_xml(self, properties=properties)
-        xml_tree = ET.fromstring(junit_suite.to_xml_string([junit_suite]))
         testsuite = xml_tree.find('testsuite')
-        project_span_ids = testsuite.find(
+        project_span_ids = xml_tree.find(
             '*property[@name="polarion-project-span-ids"]')
 
         for result in self.step.plan.execute.results():
@@ -68,6 +79,10 @@ class ReportPolarion(tmt.steps.report.ReportPlugin):
             for name, value in test_properties.items():
                 ET.SubElement(properties_elem, 'property', attrib={
                     'name': name, 'value': value})
+
+        f_path = self.opt("file", os.path.join(self.workdir, DEFAULT_NAME))
+        with open(f_path, 'wb') as fw:
+            ET.ElementTree(xml_tree).write(fw)
 
         server_url = str(PolarionWorkItem._session._server.url)
         polarion_import_url = (
