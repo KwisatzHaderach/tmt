@@ -26,8 +26,9 @@ import click
 import fmf
 import requests
 import requests.adapters
+import requests.packages.urllib3.util.retry
+import urllib3.exceptions
 from click import echo, style, wrap_text
-from requests.packages.urllib3.util.retry import Retry
 from ruamel.yaml import YAML, scalarstring
 from ruamel.yaml.comments import CommentedMap
 
@@ -1006,81 +1007,130 @@ def environment_to_dict(variables: Union[str, List[str]]) -> EnvironmentType:
     return result
 
 
-def environment_file_to_dict(
-        env_files: Iterable[str], root: str = ".") -> Dict[str, str]:
+@lru_cache(maxsize=None)
+def environment_file_to_dict(env_file: str, root: str = ".") -> EnvironmentType:
     """
-    Create dict from files.
+    Read environment variables from the given file.
 
-    Files should be in yaml/yml or dotenv format.
+    File should be in YAML format (``.yaml`` or ``.yml`` suffixes), or in dotenv format.
 
-    dotenv file example:
-        ```bash
-        A=B
-        C=D
-        ```
-    yaml file example:
-        ```yaml
-        A: B
-        C: D
-        ```
+    .. code-block:: bash
+       :caption: dotenv file example
 
-    Path to the file should be relative to the metadata tree root.
+       A=B
+       C=D
+
+    .. code-block:: yaml
+       :caption: YAML file example
+
+       A: B
+       C: D
+
+    Path to each file should be relative to the metadata tree root.
+
+    .. note::
+
+       For loading environment variables from multiple files, see
+       :py:func:`environment_files_to_dict`.
     """
-    result = {}
+
+    env_file = env_file.strip()
+
+    # Fetch a remote file
+    if env_file.startswith("http"):
+        # Create retry session for longer retries, see #1229
+        session = retry_session.create(
+            retries=ENVFILE_RETRY_SESSION_RETRIES,
+            backoff_factor=ENVFILE_RETRY_SESSION_BACKOFF_FACTOR,
+            allowed_methods=('GET',),
+            status_forcelist=(
+                429,  # Too Many Requests
+                500,  # Internal Server Error
+                502,  # Bad Gateway
+                503,  # Service Unavailable
+                504   # Gateway Timeout
+                ),
+            )
+        try:
+            response = session.get(env_file)
+            response.raise_for_status()
+            content = response.text
+        except requests.RequestException as error:
+            raise GeneralError(
+                f"Failed to fetch the environment file from '{env_file}'. "
+                f"The problem was: '{error}'")
+
+    # Read a local file
+    else:
+        # Ensure we don't escape from the metadata tree root
+        try:
+            root_path = Path(root).resolve()
+            full_path = (Path(root_path) / Path(env_file)).resolve()
+            full_path.relative_to(root_path)
+        except ValueError:
+            raise GeneralError(
+                f"The 'environment-file' path '{full_path}' is outside "
+                f"of the metadata tree root '{root}'.")
+        if not Path(full_path).is_file():
+            raise GeneralError(f"File '{full_path}' doesn't exist.")
+
+        content = Path(full_path).read_text()
+
+    # Parse yaml file
+    if os.path.splitext(env_file)[1].lower() in ('.yaml', '.yml'):
+        environment = parse_yaml(content)
+
+    else:
+        try:
+            environment = parse_dotenv(content)
+
+        except ValueError:
+            raise GeneralError(
+                f"Failed to extract variables from environment file "
+                f"'{full_path}'. Ensure it has the proper format "
+                f"(i.e. A=B).")
+
+    if not environment:
+        log.warn(f"Empty environment file '{env_file}'.")
+
+        return {}
+
+    return environment
+
+
+def environment_files_to_dict(env_files: Iterable[str], root: str = ".") -> EnvironmentType:
+    """
+    Read environment variables from the given list of files.
+
+    Files should be in YAML format (``.yaml`` or ``.yml`` suffixes), or in dotenv format.
+
+    .. code-block:: bash
+       :caption: dotenv file example
+
+       A=B
+       C=D
+
+    .. code-block:: yaml
+       :caption: YAML file example
+
+       A: B
+       C: D
+
+    Path to each file should be relative to the metadata tree root.
+
+    .. note::
+
+       For loading environment variables from a single file, see
+       :py:func:`environment_file_to_dict`, which is a function
+       ``environment_files_to_dict()`` calls for each file,
+       accumulating data from all input files.
+    """
+
+    result: EnvironmentType = {}
+
     for env_file in env_files:
-        env_file = str(env_file).strip()
-        # Fetch a remote file
-        if env_file.startswith("http"):
-            # Create retry session for longer retries, see #1229
-            session = retry_session.create(
-                retries=ENVFILE_RETRY_SESSION_RETRIES,
-                backoff_factor=ENVFILE_RETRY_SESSION_BACKOFF_FACTOR,
-                allowed_methods=('GET',),
-                status_forcelist=(
-                    429,  # Too Many Requests
-                    500,  # Internal Server Error
-                    502,  # Bad Gateway
-                    503,  # Service Unavailable
-                    504   # Gateway Timeout
-                    ),
-                )
-            try:
-                response = session.get(env_file)
-                response.raise_for_status()
-                content = response.text
-            except requests.RequestException as error:
-                raise GeneralError(
-                    f"Failed to fetch the environment file from '{env_file}'. "
-                    f"The problem was: '{error}'")
-        # Read a local file
-        else:
-            # Ensure we don't escape from the metadata tree root
-            try:
-                root_path = Path(root).resolve()
-                full_path = (Path(root_path) / Path(env_file)).resolve()
-                full_path.relative_to(root_path)
-            except ValueError:
-                raise GeneralError(
-                    f"The 'environment-file' path '{full_path}' is outside "
-                    f"of the metadata tree root '{root}'.")
-            if not Path(full_path).is_file():
-                raise GeneralError(f"File '{full_path}' doesn't exist.")
-            content = Path(full_path).read_text()
-        # Parse yaml file
-        if re.match(r".*\.ya?ml$", env_file):
-            environment = parse_yaml(content)
-            if not environment:
-                log.warn(f"Empty environment file '{env_file}'.")
-            result.update(environment)
-        # Parse dotenv file
-        else:
-            try:
-                result.update(parse_dotenv(content))
-            except ValueError:
-                raise GeneralError(
-                    f"Failed to extract variables from environment file "
-                    f"'{full_path}'. Ensure it has the proper format "
-                    f"(i.e. A=B).")
+        result.update(environment_file_to_dict(env_file, root=root))
+
     return result
 
 
@@ -1147,6 +1197,8 @@ def yaml_to_dict(data: Any,
     """ Convert yaml into dictionary """
     yaml = YAML(typ=yaml_type)
     loaded_data = yaml.load(data)
+    if loaded_data is None:
+        return dict()
     if not isinstance(loaded_data, dict):
         raise GeneralError(
             f"Expected dictionary in yaml data, "
@@ -1600,6 +1652,38 @@ class TimeoutHTTPAdapter(requests.adapters.HTTPAdapter):
         return super().send(request, **kwargs)
 
 
+class RetryStrategy(requests.packages.urllib3.util.retry.Retry):  # type: ignore[misc]
+    def increment(
+            self,
+            *args: Any,
+            **kwargs: Any
+            ) -> requests.packages.urllib3.util.retry.Retry:
+        error = cast(Optional[Exception], kwargs.get('error', None))
+
+        # Detect a subset of exception we do not want to follow with a retry.
+        if error is not None:
+            # Failed certificate verification - this issue will probably not get any better
+            # should we try again.
+            if isinstance(error, urllib3.exceptions.SSLError) \
+                    and 'certificate verify failed' in str(error):
+
+                # [mpr] I'm not sure how stable this *iternal* API is, but pool seems to be the
+                # only place aware of the remote hostname. Try our best to get the hostname for
+                # a better error message, but don't crash because of a missing attribute or
+                # something as dumb.
+
+                connection_pool = kwargs.get('_pool', None)
+
+                if connection_pool is not None and hasattr(connection_pool, 'host'):
+                    message = f"Certificate verify failed for '{connection_pool.host}'."
+                else:
+                    message = 'Certificate verify failed.'
+
+                raise GeneralError(message, original=error) from error
+
+        return super().increment(*args, **kwargs)
+
+
 class retry_session(contextlib.AbstractContextManager):  # type: ignore
     """
     Context manager for requests.Session() with retries and timeout
@@ -1612,7 +1696,7 @@ class retry_session(contextlib.AbstractContextManager):  # type: ignore
             status_forcelist: Optional[Tuple[int, ...]] = None,
             timeout: Optional[int] = None
             ) -> requests.Session:
-        retry_strategy = Retry(
+        retry_strategy = RetryStrategy(
             total=retries,
             status_forcelist=status_forcelist,
             # `method_whitelist`` has been renamed to `allowed_methods` since
