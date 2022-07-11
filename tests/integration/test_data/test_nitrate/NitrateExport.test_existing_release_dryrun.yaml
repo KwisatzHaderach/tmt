@@ -6,7 +6,7 @@ nitrate.xmlrpc_driver:
   single_request_with_cookies:
   - metadata:
       guess_type: Tuple
-      latency: 0.5210080146789551
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -109,7 +109,7 @@ nitrate.xmlrpc_driver:
         setup_checksum: d41d8cd98f00b204e9800998ecf8427e
   - metadata:
       guess_type: Tuple
-      latency: 0.5107767581939697
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -135,13 +135,13 @@ nitrate.xmlrpc_driver:
         disallow_new: false
         id: 182
         max_vote_super_bug: 10000
-        milestone_url: https://wiki.test.redhat.com/BaseOs/Projects/TestsBugzilla
+        milestone_url: SomeText
         name: RHEL Tests
         vote_super_user: 0
         votes_to_confirm: false
   - metadata:
       guess_type: Tuple
-      latency: 0.5156903266906738
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -199,7 +199,7 @@ nitrate.xmlrpc_driver:
         type_id: 26
   - metadata:
       guess_type: Tuple
-      latency: 0.6713800430297852
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -250,7 +250,7 @@ nitrate.xmlrpc_driver:
         type_id: 26
   - metadata:
       guess_type: Tuple
-      latency: 0.5123815536499023
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -292,7 +292,7 @@ nitrate.xmlrpc_driver:
         tag: []
   - metadata:
       guess_type: Tuple
-      latency: 0.7530949115753174
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -312,7 +312,7 @@ nitrate.xmlrpc_driver:
     - []
   - metadata:
       guess_type: Tuple
-      latency: 0.5138411521911621
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -335,7 +335,7 @@ tmt.utils:
   check_git_url:
   - metadata:
       guess_type: Simple
-      latency: 3.0994415283203125e-06
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate

@@ -6,7 +6,7 @@ nitrate.xmlrpc_driver:
   single_request_with_cookies:
   - metadata:
       guess_type: Tuple
-      latency: 0.7478082180023193
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -29,7 +29,7 @@ nitrate.xmlrpc_driver:
     - wq64q7fp9u6snt93tg8u7afjk76lrdrt
   - metadata:
       guess_type: Tuple
-      latency: 0.5232338905334473
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -130,7 +130,7 @@ nitrate.xmlrpc_driver:
         setup_checksum: d41d8cd98f00b204e9800998ecf8427e
   - metadata:
       guess_type: Tuple
-      latency: 0.5991683006286621
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -150,7 +150,7 @@ nitrate.xmlrpc_driver:
     - []
   - metadata:
       guess_type: Tuple
-      latency: 0.5149710178375244
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -171,7 +171,7 @@ nitrate.xmlrpc_driver:
         name: fmf-export
   - metadata:
       guess_type: Tuple
-      latency: 0.5152556896209717
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -191,7 +191,7 @@ nitrate.xmlrpc_driver:
     - null
   - metadata:
       guess_type: Tuple
-      latency: 0.5133018493652344
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -211,7 +211,7 @@ nitrate.xmlrpc_driver:
     - null
   - metadata:
       guess_type: Tuple
-      latency: 0.5128626823425293
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -238,7 +238,7 @@ nitrate.xmlrpc_driver:
       product_id: 182
   - metadata:
       guess_type: Tuple
-      latency: 1.2668228149414062
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -325,7 +325,7 @@ nitrate.xmlrpc_driver:
         - 10700
   - metadata:
       guess_type: Tuple
-      latency: 1.5434839725494385
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -414,7 +414,7 @@ nitrate.xmlrpc_driver:
         - 10700
   - metadata:
       guess_type: Tuple
-      latency: 0.6077902317047119
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -466,7 +466,7 @@ requests.sessions:
     POST:
       https://bugzilla.redhat.com/xmlrpc.cgi:
       - metadata:
-          latency: 0.4316999912261963
+          latency: 0.0
           module_call_list:
           - unittest.case
           - integration.test_nitrate
@@ -518,7 +518,7 @@ requests.sessions:
           reason: OK
           status_code: 200
       - metadata:
-          latency: 0.46776437759399414
+          latency: 0.0
           module_call_list:
           - unittest.case
           - integration.test_nitrate
@@ -569,7 +569,7 @@ requests.sessions:
           reason: OK
           status_code: 200
       - metadata:
-          latency: 0.5635428428649902
+          latency: 0.0
           module_call_list:
           - unittest.case
           - integration.test_nitrate
@@ -621,7 +621,7 @@ requests.sessions:
           reason: OK
           status_code: 200
       - metadata:
-          latency: 0.5779147148132324
+          latency: 0.0
           module_call_list:
           - unittest.case
           - integration.test_nitrate
@@ -724,7 +724,7 @@ tmt.utils:
   check_git_url:
   - metadata:
       guess_type: Simple
-      latency: 0.31762003898620605
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate

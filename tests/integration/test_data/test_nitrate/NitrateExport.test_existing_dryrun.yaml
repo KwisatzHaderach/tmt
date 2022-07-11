@@ -6,7 +6,7 @@ nitrate.xmlrpc_driver:
   single_request_with_cookies:
   - metadata:
       guess_type: Tuple
-      latency: 0.5817399024963379
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -109,7 +109,7 @@ nitrate.xmlrpc_driver:
         setup_checksum: d41d8cd98f00b204e9800998ecf8427e
   - metadata:
       guess_type: Tuple
-      latency: 0.7401890754699707
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
@@ -131,7 +131,7 @@ tmt.utils:
   check_git_url:
   - metadata:
       guess_type: Simple
-      latency: 4.5299530029296875e-06
+      latency: 0.0
       module_call_list:
       - unittest.case
       - integration.test_nitrate
