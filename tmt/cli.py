@@ -554,8 +554,6 @@ def tests_import(
 @click.option(
     '--project-id', help='Use specific Polarion project ID.')
 @click.option(
-    '--project-id', help='Use specific Polarion project ID')
-@click.option(
     '--bugzilla', is_flag=True,
     help="Link Nitrate case to Bugzilla specified in the 'link' attribute "
          "with the relation 'verifies'.")
